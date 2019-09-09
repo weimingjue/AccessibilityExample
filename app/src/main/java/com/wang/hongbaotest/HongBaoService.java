@@ -26,6 +26,7 @@ public class HongBaoService extends AccessibilityService {
         List<AccessibilityNodeInfo> listBiaoQing = findViewByContentDescription("表情");
         if (!Utils.isEmptyArray(listBiaoQing)) {
             Utils.toast("找到wx的表情图标");
+            recycleAccessibilityNodeInfo(listBiaoQing);
         }
     }
 
@@ -73,6 +74,17 @@ public class HongBaoService extends AccessibilityService {
                 findViewByContentDescription(list, child, contentDescription);
                 child.recycle();
             }
+        }
+    }
+
+    /**
+     * 由于太多,最好回收这些AccessibilityNodeInfo
+     */
+    public static void recycleAccessibilityNodeInfo(List<AccessibilityNodeInfo> listInfo) {
+        if (Utils.isEmptyArray(listInfo)) return;
+
+        for (AccessibilityNodeInfo info : listInfo) {
+            info.recycle();
         }
     }
 }
