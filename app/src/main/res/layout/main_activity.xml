@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启辅助，打开wx聊天界可看到提示，如没有提示请一键清理所有app或重启手机再试" />
+
+    <Button
+        android:id="@+id/bt_main_ShouShi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点击分发手势" />
+
+    <com.wang.hongbaotest.TouchView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
