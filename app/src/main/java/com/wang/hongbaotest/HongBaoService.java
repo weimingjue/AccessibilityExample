@@ -1,8 +1,11 @@
 package com.wang.hongbaotest;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.GestureDescription;
+import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -232,6 +235,31 @@ public class HongBaoService extends AccessibilityService {
                 child.recycle();
             }
         }
+    }
+
+    /**
+     * 立即发送移动的手势
+     * 注意7.0以上的手机才有此方法，请确保运行在7.0手机上
+     *
+     * @param path  移动路径
+     * @param mills 持续总时间
+     */
+    @RequiresApi(24)
+    public void dispatchGestureMove(Path path, int mills) {
+        dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
+                (path, 0, mills)).build(), null, null);
+    }
+
+    /**
+     * 点击指定位置
+     * 注意7.0以上的手机才有此方法，请确保运行在7.0手机上
+     */
+    @RequiresApi(24)
+    public void dispatchGestureClick(int x, int y) {
+        Path path = new Path();
+        path.moveTo(x, y);
+        dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
+                (path, 0, 100)).build(), null, null);
     }
 
     /**
