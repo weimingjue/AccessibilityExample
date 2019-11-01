@@ -29,11 +29,11 @@ public class HongBaoService extends AccessibilityService {
     //实现辅助功能
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        AccessibilityNodeInfo listBiaoQing = findFirst(AbstractTF.newContentDescription("表情", true));
-        if (listBiaoQing != null) {
+        AccessibilityNodeInfo biaoQingInfo = findFirst(AbstractTF.newContentDescription("表情", true));
+        if (biaoQingInfo != null) {
             Utils.toast("找到wx的表情图标");//第一次运行可能会吐不出来
             Log.e(TAG, "onAccessibilityEvent: 找到wx的表情图标");//可以查看日志
-            listBiaoQing.recycle();
+            biaoQingInfo.recycle();
         }
     }
 
@@ -163,7 +163,9 @@ public class HongBaoService extends AccessibilityService {
     /**
      * 查找第一个匹配的控件
      *
-     * @param tfs 匹配条件
+     * @param tfs 匹配条件，多个AbstractTF是&&的关系，如：
+     *            AbstractTF.newContentDescription("表情", true),AbstractTF.newClassName(AbstractTF.ST_IMAGEVIEW)
+     *            表示描述内容是'表情'并且是imageview的控件
      */
     public AccessibilityNodeInfo findFirst(@NonNull AbstractTF... tfs) {
         AccessibilityNodeInfo rootInfo = getRootInActiveWindow();
@@ -198,7 +200,6 @@ public class HongBaoService extends AccessibilityService {
         }
         return null;
     }
-
 
     /**
      * 查找全部匹配的控件
