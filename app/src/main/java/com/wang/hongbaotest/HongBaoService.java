@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,6 +179,8 @@ public class HongBaoService extends AccessibilityService {
 
     public static AccessibilityNodeInfo findFirstRecursive(AccessibilityNodeInfo parent, @NonNull AbstractTF... tfs) {
         if (parent == null) return null;
+        if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
+
         for (int i = 0; i < parent.getChildCount(); i++) {
             AccessibilityNodeInfo child = parent.getChild(i);
             if (child == null) continue;
@@ -218,7 +221,9 @@ public class HongBaoService extends AccessibilityService {
     }
 
     public static void findAllRecursive(List<AccessibilityNodeInfo> list, AccessibilityNodeInfo parent, @NonNull AbstractTF... tfs) {
-        if (parent == null) return;
+        if (parent == null || list == null) return;
+        if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
+
         for (int i = 0; i < parent.getChildCount(); i++) {
             AccessibilityNodeInfo child = parent.getChild(i);
             if (child == null) continue;
