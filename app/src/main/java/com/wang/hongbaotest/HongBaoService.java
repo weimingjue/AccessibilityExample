@@ -85,98 +85,73 @@ public class HongBaoService extends AccessibilityService {
     }
 
     /**
-     * 根据getRootInActiveWindow查找包含当前text的控件
-     *
-     * @param containsText 只要内容包含就会找到（应该是根据drawText找的）
-     */
-    @Nullable
-    public List<AccessibilityNodeInfo> findViewByContainsText(@NonNull String containsText) {
-        AccessibilityNodeInfo info = getRootInActiveWindow();
-        if (info == null) return null;
-        List<AccessibilityNodeInfo> list = info.findAccessibilityNodeInfosByText(containsText);
-        info.recycle();
-        return list;
-    }
-
-    /**
-     * 根据getRootInActiveWindow查找和当前text相等的控件
-     *
-     * @param equalsText 需要找的text
-     */
-    @Nullable
-    public List<AccessibilityNodeInfo> findViewByEqualsText(@NonNull String equalsText) {
-        List<AccessibilityNodeInfo> listOld = findViewByContainsText(equalsText);
-        if (Utils.isEmptyArray(listOld)) {
-            return null;
-        }
-        ArrayList<AccessibilityNodeInfo> listNew = new ArrayList<>();
-        for (AccessibilityNodeInfo ani : listOld) {
-            if (ani.getText() != null && equalsText.equals(ani.getText().toString())) {
-                listNew.add(ani);
-            } else {
-                ani.recycle();
-            }
-        }
-        return listNew;
-    }
-
-    /**
-     * 根据getRootInActiveWindow查找当前id的控件
-     *
-     * @param pageName 被查找项目的包名:com.android.xxx
-     * @param idName   id值:tv_main
-     */
-    @Nullable
-    public AccessibilityNodeInfo findViewById(String pageName, String idName) {
-        return findViewById(pageName + ":id/" + idName);
-    }
-
-    /**
-     * 根据getRootInActiveWindow查找当前id的控件
-     *
-     * @param idfullName id全称:com.android.xxx:id/tv_main
-     */
-    @Nullable
-    public AccessibilityNodeInfo findViewById(String idfullName) {
-        List<AccessibilityNodeInfo> list = findViewByIdList(idfullName);
-        return Utils.isEmptyArray(list) ? null : list.get(0);
-    }
-
-    /**
-     * 根据getRootInActiveWindow查找当前id的控件集合(类似listview这种一个页面重复的id很多)
-     *
-     * @param idfullName id全称:com.android.xxx:id/tv_main
-     */
-    @Nullable
-    public List<AccessibilityNodeInfo> findViewByIdList(String idfullName) {
-        try {
-            AccessibilityNodeInfo rootInfo = getRootInActiveWindow();
-            if (rootInfo == null) return null;
-            List<AccessibilityNodeInfo> list = rootInfo.findAccessibilityNodeInfosByViewId(idfullName);
-            rootInfo.recycle();
-            return list;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * 查找第一个匹配的控件
      *
      * @param tfs 匹配条件，多个AbstractTF是&&的关系，如：
      *            AbstractTF.newContentDescription("表情", true),AbstractTF.newClassName(AbstractTF.ST_IMAGEVIEW)
      *            表示描述内容是'表情'并且是imageview的控件
      */
+    @Nullable
     public AccessibilityNodeInfo findFirst(@NonNull AbstractTF... tfs) {
+        if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
+
         AccessibilityNodeInfo rootInfo = getRootInActiveWindow();
         if (rootInfo == null) return null;
 
-        AccessibilityNodeInfo firstInfo = findFirstRecursive(rootInfo, tfs);
+        int idTextTFCount = 0, idTextIndex = 0;
+        for (int i = 0; i < tfs.length; i++) {
+            if (tfs[i] instanceof AbstractTF.IdTextTF) {
+                idTextTFCount++;
+                idTextIndex = i;
+            }
+        }
+        switch (idTextTFCount) {
+            case 0://id或text数量为0，直接循环查找
+                AccessibilityNodeInfo returnInfo = findFirstRecursive(rootInfo, tfs);
+                rootInfo.recycle();
+                return returnInfo;
+            case 1://id或text数量为1，先查出对应的id或text，然后再查其他条件
+                if (tfs.length == 1) {
+                    AccessibilityNodeInfo returnInfo2 = ((AbstractTF.IdTextTF) tfs[idTextIndex]).findFirst(rootInfo);
+                    rootInfo.recycle();
+                    return returnInfo2;
+                } else {
+                    List<AccessibilityNodeInfo> listIdText = ((AbstractTF.IdTextTF) tfs[idTextIndex]).findAll(rootInfo);
+                    if (Utils.isEmptyArray(listIdText)) {
+                        break;
+                    }
+                    AccessibilityNodeInfo returnInfo3 = null;
+                    for (AccessibilityNodeInfo info : listIdText) {//遍历找到匹配的
+                        if (returnInfo3 == null) {
+                            boolean isOk = true;
+                            for (AbstractTF tf : tfs) {
+                                if (!tf.checkOk(info)) {
+                                    isOk = false;
+                                    break;
+                                }
+                            }
+                            if (isOk) {
+                                returnInfo3 = info;
+                            } else {
+                                info.recycle();
+                            }
+                        } else {
+                            info.recycle();
+                        }
+                    }
+                    rootInfo.recycle();
+                    return returnInfo3;
+                }
+            default:
+                throw new RuntimeException("由于时间有限，并且多了也没什么用，所以IdTF和TextTF只能有一个");
+        }
         rootInfo.recycle();
-        return firstInfo;
+        return null;
     }
 
+    /**
+     * @param tfs 由于是递归循环，会忽略IdTF和TextTF
+     */
     public static AccessibilityNodeInfo findFirstRecursive(AccessibilityNodeInfo parent, @NonNull AbstractTF... tfs) {
         if (parent == null) return null;
         if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
@@ -211,15 +186,59 @@ public class HongBaoService extends AccessibilityService {
      *            AbstractTF.newContentDescription("表情", true),AbstractTF.newClassName(AbstractTF.ST_IMAGEVIEW)
      *            表示描述内容是'表情'并且是imageview的控件
      */
+    @NonNull
     public List<AccessibilityNodeInfo> findAll(@NonNull AbstractTF... tfs) {
+        if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
+
         ArrayList<AccessibilityNodeInfo> list = new ArrayList<>();
         AccessibilityNodeInfo rootInfo = getRootInActiveWindow();
         if (rootInfo == null) return list;
-        findAllRecursive(list, rootInfo, tfs);
+
+        int idTextTFCount = 0, idTextIndex = 0;
+        for (int i = 0; i < tfs.length; i++) {
+            if (tfs[i] instanceof AbstractTF.IdTextTF) {
+                idTextTFCount++;
+                idTextIndex = i;
+            }
+        }
+        switch (idTextTFCount) {
+            case 0://id或text数量为0，直接循环查找
+                findAllRecursive(list, rootInfo, tfs);
+                break;
+            case 1://id或text数量为1，先查出对应的id或text，然后再循环
+                List<AccessibilityNodeInfo> listIdText = ((AbstractTF.IdTextTF) tfs[idTextIndex]).findAll(rootInfo);
+                if (Utils.isEmptyArray(listIdText)) {
+                    break;
+                }
+                if (tfs.length == 1) {
+                    list.addAll(listIdText);
+                } else {
+                    for (AccessibilityNodeInfo info : listIdText) {
+                        boolean isOk = true;
+                        for (AbstractTF tf : tfs) {
+                            if (!tf.checkOk(info)) {
+                                isOk = false;
+                                break;
+                            }
+                        }
+                        if (isOk) {
+                            list.add(info);
+                        } else {
+                            info.recycle();
+                        }
+                    }
+                }
+                break;
+            default:
+                throw new RuntimeException("由于时间有限，并且多了也没什么用，所以IdTF和TextTF只能有一个");
+        }
         rootInfo.recycle();
         return list;
     }
 
+    /**
+     * @param tfs 由于是递归循环，会忽略IdTF和TextTF
+     */
     public static void findAllRecursive(List<AccessibilityNodeInfo> list, AccessibilityNodeInfo parent, @NonNull AbstractTF... tfs) {
         if (parent == null || list == null) return;
         if (tfs.length == 0) throw new InvalidParameterException("AbstractTF不允许传空");
@@ -251,7 +270,7 @@ public class HongBaoService extends AccessibilityService {
      * @param mills 持续总时间
      */
     @RequiresApi(24)
-    public void dispatchGestureMove(Path path, int mills) {
+    public void dispatchGestureMove(Path path, long mills) {
         dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
                 (path, 0, mills)).build(), null, null);
     }
