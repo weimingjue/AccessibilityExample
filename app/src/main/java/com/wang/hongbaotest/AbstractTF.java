@@ -81,7 +81,7 @@ public abstract class AbstractTF<T> {
             if (mIsEquals) {
                 AccessibilityNodeInfo returnInfo = null;
                 for (AccessibilityNodeInfo info : list) {
-                    if (mCheckData.equals(info.getText().toString())) {
+                    if (info.getText() != null && mCheckData.equals(info.getText().toString())) {
                         returnInfo = info;
                     } else {
                         info.recycle();
@@ -103,7 +103,7 @@ public abstract class AbstractTF<T> {
             if (mIsEquals) {
                 ArrayList<AccessibilityNodeInfo> listNew = new ArrayList<>();
                 for (AccessibilityNodeInfo info : list) {
-                    if (mCheckData.equals(info.getText().toString())) {
+                    if (info.getText() != null && mCheckData.equals(info.getText().toString())) {
                         listNew.add(info);
                     } else {
                         info.recycle();
