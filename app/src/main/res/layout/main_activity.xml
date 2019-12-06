@@ -16,6 +16,11 @@
         android:layout_height="wrap_content"
         android:text="点击分发手势" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="（如果手势发送失败，请重启手机再试）" />
+
     <com.wang.hongbaotest.TouchView
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

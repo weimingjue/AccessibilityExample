@@ -23,24 +23,24 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                    Toast.makeText(MainActivity.this, "7.0及以上才有手势", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "7.0及以上才能使用手势", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Path path = new Path();
-                path.moveTo(10, 800);
-                path.lineTo(400, 800);
+                path.moveTo(400, 800);
+                path.lineTo(10, 800);
                 final GestureDescription.StrokeDescription sd = new GestureDescription.StrokeDescription(path, 0, 500);
                 HongBaoService.mService.dispatchGesture(new GestureDescription.Builder().addStroke(sd).build(), new AccessibilityService.GestureResultCallback() {
                     @Override
                     public void onCompleted(GestureDescription gestureDescription) {
                         super.onCompleted(gestureDescription);
-                        Toast.makeText(MainActivity.this, "手势返成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "手势成功", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onCancelled(GestureDescription gestureDescription) {
                         super.onCancelled(gestureDescription);
-                        Toast.makeText(MainActivity.this, "手势失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "手势失败，请重启手机再试", Toast.LENGTH_SHORT).show();
                     }
                 }, null);
             }

@@ -8,5 +8,4 @@
     android:canRetrieveWindowContent="true"
     android:description="@string/hongbao"
     android:notificationTimeout="100"
-    android:packageNames="com.tencent.mm,com.android.systemui"
     />
