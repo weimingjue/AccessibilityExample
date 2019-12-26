@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -18,12 +19,15 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
+        //屏幕横滑手势
         findViewById(R.id.bt_main_ShouShi).setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
@@ -51,6 +55,8 @@ public class MainActivity extends Activity {
                 }, null);
             }
         });
+
+        //点击指定控件
         findViewById(R.id.bt_main_DianJi).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +68,8 @@ public class MainActivity extends Activity {
                 HongBaoService.clickView(ces);
             }
         });
+
+        //用手势长按指定控件
         findViewById(R.id.bt_main_ChangAn).setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
@@ -96,6 +104,8 @@ public class MainActivity extends Activity {
                 }, null);
             }
         });
+
+        //用系统的返回效果
         findViewById(R.id.bt_main_FanHui).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,17 +113,20 @@ public class MainActivity extends Activity {
             }
         });
 
+        //测试的控件
         View viewCes = findViewById(R.id.bt_main_CeShi);
         viewCes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.toast("'测试控件'被点击了");
+                Log.e(TAG, "onClick: '测试控件'被点击了");
             }
         });
         viewCes.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Utils.toast("'测试控件'被长按了");
+                Log.e(TAG, "onLongClick: '测试控件'被长按了");
                 return true;
             }
         });
