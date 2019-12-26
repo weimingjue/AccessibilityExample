@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -61,7 +62,6 @@ public class MainActivity extends Activity {
                 HongBaoService.clickView(ces);
             }
         });
-        final View viewCes = findViewById(R.id.bt_main_CeShi);
         findViewById(R.id.bt_main_ChangAn).setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
@@ -70,11 +70,21 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "7.0及以上才能使用手势", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int[] absXY = new int[2];
-                viewCes.getLocationOnScreen(absXY);
-//                HongBaoService.mService.dispatchGestureClick(absXY[0],absXY[1]);//这是用手势来点击
+                AccessibilityNodeInfo ces = HongBaoService.mService.findFirst(AbstractTF.newText("测试控件", true));
+                if (ces == null) {
+                    Utils.toast("找测试控件失败");
+                    return;
+                }
+
+//                ces.performAction(AccessibilityNodeInfo.ACTION_CLICK);//长按
+
+                //这里为了示范手势的效果
+                Rect absXY = new Rect();
+                ces.getBoundsInScreen(absXY);
+//                HongBaoService.mService.dispatchGestureClick(absXY.left + (absXY.right - absXY.left) / 2, absXY.top + (absXY.bottom - absXY.top) / 2);//手势点击效果
+                //手势长按效果
                 Path path = new Path();
-                path.moveTo(absXY[0], absXY[1]);
+                path.moveTo(absXY.left + (absXY.right - absXY.left) / 2, absXY.top + (absXY.bottom - absXY.top) / 2);//控件正中间
                 HongBaoService.mService.dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
                         (path, 0, 800)).build(), new AccessibilityService.GestureResultCallback() {
 
@@ -93,6 +103,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        View viewCes = findViewById(R.id.bt_main_CeShi);
         viewCes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
