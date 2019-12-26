@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
                     return;
                 }
 
-//                ces.performAction(AccessibilityNodeInfo.ACTION_CLICK);//长按
+//                ces.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);//长按
 
                 //这里为了示范手势的效果
                 Rect absXY = new Rect();
