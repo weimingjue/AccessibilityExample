@@ -10,11 +10,46 @@
         android:layout_height="wrap_content"
         android:text="开启辅助，打开wx聊天界可看到提示，如没有提示或者手势发送失败，请到博客或github上查看解决方案" />
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bt_main_ShouShi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分发手势" />
+
+            <Button
+                android:id="@+id/bt_main_DianJi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="找到'测试控件'并点击" />
+
+            <Button
+                android:id="@+id/bt_main_ChangAn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="长按指定位置" />
+
+            <Button
+                android:id="@+id/bt_main_FanHui"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="执行系统返回键" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <Button
-        android:id="@+id/bt_main_ShouShi"
+        android:id="@+id/bt_main_CeShi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="点击分发手势" />
+        android:text="测试控件" />
 
     <com.wang.hongbaotest.TouchView
         android:layout_width="match_parent"
