@@ -91,17 +91,8 @@ public class MainActivity extends Activity {
                 ces.getBoundsInScreen(absXY);
 //                HongBaoService.mService.dispatchGestureClick(absXY.left + (absXY.right - absXY.left) / 2, absXY.top + (absXY.bottom - absXY.top) / 2);//手势点击效果
                 //手势长按效果
-                Path path = new Path();
-                path.moveTo(absXY.left + (absXY.right - absXY.left) / 2, absXY.top + (absXY.bottom - absXY.top) / 2);//控件正中间
-                HongBaoService.mService.dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
-                        (path, 0, 800)).build(), new AccessibilityService.GestureResultCallback() {
-
-                    @Override
-                    public void onCancelled(GestureDescription gestureDescription) {
-                        super.onCancelled(gestureDescription);
-                        Toast.makeText(MainActivity.this, "手势失败，请重启手机再试", Toast.LENGTH_SHORT).show();
-                    }
-                }, null);
+                //控件正中间
+                HongBaoService.mService.dispatchGestureLongClick(absXY.left + (absXY.right - absXY.left) / 2, absXY.top + (absXY.bottom - absXY.top) / 2);
             }
         });
 

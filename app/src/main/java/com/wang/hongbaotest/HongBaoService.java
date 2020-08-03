@@ -288,6 +288,21 @@ public class HongBaoService extends AccessibilityService {
     }
 
     /**
+     * 长按指定位置
+     * 注意7.0以上的手机才有此方法，请确保运行在7.0手机上
+     */
+    @RequiresApi(24)
+    public void dispatchGestureLongClick(int x, int y) {
+        Path path = new Path();
+        path.moveTo(x - 1, y - 1);
+        path.lineTo(x, y - 1);
+        path.lineTo(x, y);
+        path.lineTo(x - 1, y);
+        dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
+                (path, 0, 1000)).build(), null, null);
+    }
+
+    /**
      * 由于太多,最好回收这些AccessibilityNodeInfo
      */
     public static void recycleAccessibilityNodeInfo(List<AccessibilityNodeInfo> listInfo) {
