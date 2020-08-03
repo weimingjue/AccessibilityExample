@@ -282,7 +282,8 @@ public class HongBaoService extends AccessibilityService {
     @RequiresApi(24)
     public void dispatchGestureClick(int x, int y) {
         Path path = new Path();
-        path.moveTo(x, y);
+        path.moveTo(x - 1, y - 1);
+        path.lineTo(x + 1, y + 1);
         dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
                 (path, 0, 100)).build(), null, null);
     }
