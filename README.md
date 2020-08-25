@@ -17,3 +17,6 @@
 2.手势发送失败：重启手机即可
 
 辅助功能出问题万能解决方式：重启手机、debug、看日志
+
+
+博客：https://blog.csdn.net/weimingjue/article/details/82744146
