@@ -3,6 +3,7 @@ package com.wang.hongbaotest;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -286,6 +287,16 @@ public class HongBaoService extends AccessibilityService {
         path.lineTo(x + 1, y + 1);
         dispatchGesture(new GestureDescription.Builder().addStroke(new GestureDescription.StrokeDescription
                 (path, 0, 100)).build(), null, null);
+    }
+
+    /**
+     * 有些应用和谐了{@link #clickView}方法
+     */
+    @RequiresApi(24)
+    public void dispatchGestureClick(AccessibilityNodeInfo info) {
+        Rect rect = AbstractTF.mRecycleRect;
+        info.getBoundsInScreen(rect);
+        dispatchGestureClick(rect.centerX(), rect.centerY());
     }
 
     /**
