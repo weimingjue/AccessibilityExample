@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -235,6 +236,15 @@ public class HongBaoService extends AccessibilityService {
         }
         rootInfo.recycle();
         return list;
+    }
+
+    /**
+     * 目前好像只有外部输入设备才会调用（虚拟键盘没用）
+     */
+    @Override
+    protected boolean onKeyEvent(KeyEvent event) {
+        System.out.println("哈哈哈哈" + event);
+        return super.onKeyEvent(event);
     }
 
     /**
